@@ -3,6 +3,7 @@ import { Component } from 'react';
 
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
+import { Button } from './Button/Button';
 
 export class App extends Component {
   state = {
@@ -19,14 +20,14 @@ export class App extends Component {
     const { query, page } = this.state;
     if (prevState.query !== query || prevState.page !== page) {
       getImages(query, page)
-        .then(({ hits, total_hits, totalHits }) => {
+        .then(({ hits, total, totalHits }) => {
           if (hits.length === 0) {
             this.setState({ isEmpty: true });
             return;
           }
           this.setState(prevState => ({
             images: [...prevState.images, ...hits],
-            showBtn: page < Math.ceil(total_hits / totalHits),
+            showBtn: page < Math.ceil(total / totalHits),
           }));
         })
         .catch(error => this.setState({ error: error.message }))
@@ -45,10 +46,18 @@ export class App extends Component {
       isLoading: false,
     });
   };
+  onBtnClick = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+  };
   render() {
-    return <>
-      <Searchbar onFormSubmit={this.onFormSubmit} />
-      <ImageGallery photos={this.state.images } />
-    </>
+    return (
+      <>
+        <Searchbar onFormSubmit={this.onFormSubmit} />
+        {this.state.isEmpty && <p>Nothing find for this {this.state.query}.</p>}
+        {this.state.error && <p>Something wrong! {this.state.error}</p>}
+        <ImageGallery photos={this.state.images} />
+        {this.state.showBtn && <Button onBtnClick={this.onBtnClick} />}
+      </>
+    );
   }
 }
