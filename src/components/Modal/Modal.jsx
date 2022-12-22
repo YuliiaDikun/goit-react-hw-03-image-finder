@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 import css from './Modal.module.css';
 import { Component } from 'react';
 export class Modal extends Component {
@@ -27,3 +29,7 @@ export class Modal extends Component {
     );
   }
 }
+
+Modal.propTypes = {
+  onImageClick: PropTypes.func,
+};
