@@ -56,20 +56,23 @@ export class App extends Component {
     this.setState({ largeImgUrl: largeImg });
   };
   render() {
-    const { query, error, images, isEmpty, showBtn, largeImgUrl, isLoading } = this.state;
+    const { query, error, images, isEmpty, showBtn, largeImgUrl, isLoading } =
+      this.state;
     const hasLargeImgUrl = largeImgUrl.length > 0;
     return (
       <>
         <Searchbar onFormSubmit={this.onFormSubmit} />
         {isEmpty && <p>Nothing find for this {query}.</p>}
         {error && <p>Something wrong! {error}</p>}
-        {isLoading && <Loader/> }
+        {isLoading && <Loader />}
         {images?.length > 0 && (
           <ImageGallery photos={images} onImageClick={this.onImageClick} />
         )}
 
         {showBtn && <Button onBtnClick={this.onBtnClick} />}
-        {hasLargeImgUrl && <Modal largeImgUrl={largeImgUrl} onImageClick={this.onImageClick} />}
+        {hasLargeImgUrl && (
+          <Modal largeImgUrl={largeImgUrl} onImageClick={this.onImageClick} />
+        )}
       </>
     );
   }
