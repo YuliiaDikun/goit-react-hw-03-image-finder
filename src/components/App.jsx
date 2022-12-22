@@ -4,6 +4,7 @@ import { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
+import { Modal } from './Modal/Modal';
 
 export class App extends Component {
   state = {
@@ -19,6 +20,7 @@ export class App extends Component {
   componentDidUpdate(_, prevState) {
     const { query, page } = this.state;
     if (prevState.query !== query || prevState.page !== page) {
+      this.setState({ isLoading: true });
       getImages(query, page)
         .then(({ hits, total, totalHits }) => {
           if (hits.length === 0) {
@@ -49,14 +51,19 @@ export class App extends Component {
   onBtnClick = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
+  onImageClick = largeImg => {
+    this.setState({ largeImgUrl: largeImg });
+  };
   render() {
+    const { query, error, images, isEmpty, showBtn, largeImgUrl } = this.state;
     return (
       <>
         <Searchbar onFormSubmit={this.onFormSubmit} />
-        {this.state.isEmpty && <p>Nothing find for this {this.state.query}.</p>}
-        {this.state.error && <p>Something wrong! {this.state.error}</p>}
-        <ImageGallery photos={this.state.images} />
-        {this.state.showBtn && <Button onBtnClick={this.onBtnClick} />}
+        {isEmpty && <p>Nothing find for this {query}.</p>}
+        {error && <p>Something wrong! {error}</p>}
+        <ImageGallery photos={images} onImageClick={this.onImageClick} />
+        {showBtn && <Button onBtnClick={this.onBtnClick} />}
+        {largeImgUrl.length > 0 && <Modal largeImgUrl={largeImgUrl} />}
       </>
     );
   }
